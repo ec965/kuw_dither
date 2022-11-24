@@ -1,4 +1,22 @@
-# Why?
+# Summary
+
+```bash
+convert $INPUT \
+    \( -resize 50% )\
+    \( -kuwahara 1 \) \
+    \( -ordered-dither o8x8,3 -colors 8 \) \
+    \( -interpolate Nearest -filter Box \) \
+    \( -resize 200% \) \
+    $OUTPUT
+```
+
+1. Downscale the image
+2. Run the Kuwahara filter 
+3. Use ordered dithering with 8 colors
+4. Interpolate pixels using the nearest neighbor algorithm with a Box filter
+5. Upscale back to the original size
+
+# Inspiration
 
 ## 4Chan /wg
 
@@ -51,3 +69,71 @@ to go through PhotoShop GUI flows in the future.
 I want to create a general filter that looks cool.
 I'll then use the filter to create a similar background image to
 [Seph's](https://josephg.com/blog/) blog for my own website.
+
+# Experimentation
+
+After readint the Low Tech Magazine article, I experimented with just dithering
+with ImageMagick.
+This went okay but I wasn't able to get an effect I liked.
+
+After going through all the above inspiration, I started off experimenting
+with different levels of Kuwahara filtering with different dithering algorithms.
+The outputs of the Floyd-Steinberg and Riemersma filters produced interesting images
+but they weren't as geometric as my original 4Chan inspiration.
+
+## Result
+
+Finally, I figured out that using ordered dithering, I could achieve what I was looking for.
+After some experimentation, I settled on using ordered dithering with ordered 8x8 threshold map at level 3.
+The final ImageMagick script is:
+
+```bash
+convert $INPUT \
+    \( -resize 50% )\
+    \( -kuwahara 1 \) \
+    \( -ordered-dither o8x8,3 -colors 8 \) \
+    \( -interpolate Nearest -filter Box \) \
+    \( -resize 200% \) \
+    $OUTPUT
+```
+
+To summarize:
+
+1. Downscale the image
+2. Run the Kuwahara filter 
+3. Use ordered dithering with 8 colors
+4. Interpolate pixels using the nearest neighbor algorithm with a Box filter
+5. Upscale back to the original size
+
+## Tweaking Parameters
+
+### Downscale
+
+Tweaking the initial downscale will result in a more obvious filter.
+When the Kuwahara filter and dithering effect have fewer pixels to work with,
+their effects are more pronounced.
+
+### Kuwahara Filter
+
+Increasing the Kuwahara filter radius will give a more painter like look to the final image.
+More areas of color will get splotched together.
+
+### Dithering
+
+Different dithering algorithms will produce different effects.
+Using the Floyd-Steinberg algorithm will produce a much less pixelated look.
+With Ordered dithering, I was able to produce a much more grid like pixelated look.
+
+Having 8 colors usually produces an image that looks distinctly filtered.
+With 16 or 32 colors, I usually will get enough colors that output will still look
+fairly close to the input in terms of color.
+
+### Interpolation
+
+Interpolation will give the final result a more pixelated look.
+Using the Box or Point filters gives a harsher look while
+the Triangle filter results in a softer image.
+
+### Upscale
+
+The final upscale is just to get the image back to it's original size.

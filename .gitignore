@@ -1,4 +1,5 @@
 .mypy_cache
+Session.vim
 *.jpg
 *.png
 out/
