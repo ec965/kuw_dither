@@ -1,20 +1,21 @@
-# Summary
-
-```bash
-convert $INPUT \
-    \( -resize 50% )\
-    \( -kuwahara 1 \) \
-    \( -ordered-dither o8x8,3 -colors 8 \) \
-    \( -interpolate Nearest -filter Box \) \
-    \( -resize 200% \) \
-    $OUTPUT
-```
+This is an ImageMagick script that does the following:
 
 1. Downscale the image
 2. Run the Kuwahara filter 
 3. Use ordered dithering with 8 colors
 4. Interpolate pixels using the nearest neighbor algorithm with a Box filter
 5. Upscale back to the original size
+
+# Usage
+
+Requirements:
+
+- python3
+- ImageMagick
+
+```bash
+./kuw_dither.py $INPUT_FILE_NAME
+```
 
 # Inspiration
 
