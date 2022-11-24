@@ -1,0 +1,4 @@
+.mypy_cache
+*.jpg
+*.png
+out/
