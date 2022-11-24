@@ -40,7 +40,7 @@ I was fucking around and found a fun way of livening up old and/or low res wallp
 
 ## Low Tech Magazine
 
-I found [a post on Low tech magazine](https://solar.lowtechmagazine.com/2018/09/how-to-build-a-lowtech-website.html)
+I found [a post on Low Tech Magazine](https://solar.lowtechmagazine.com/2018/09/how-to-build-a-lowtech-website.html)
 that discussed how they redesigned their blog to be more energy efficient.
 One of the things they did was dither all images to reduce image size.
 
