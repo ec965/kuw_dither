@@ -15,53 +15,42 @@ def main():
 
     down = 1 / 2
 
-    f: dict[str, float | str] = {
-        "down": to_percent(down),
-        "kuw": 3,
-        "ordered-dither": "o8x8,3",
-        "colors": 8,
-        "interpolate": "Nearest",
-        "filter": "Box",
-        "up": to_percent(1 / down),
-    }
+    f = [
+        {"resize": f"{to_percent(down)}%"},
+        {"kuwahara": 1},
+        {"ordered-dither": "o8x8,3", "colors": 8},
+        {"interpolate": "Nearest", "filter": "Box"},
+        {"resize": f"{to_percent(1/down)}%"},
+    ]
 
-    f = build_args(input, f, output_dir)
-    convert_image(f)
+    result = convert_img(input, output_dir, f)
+    print("Finished: ", result)
 
 
-def convert_image(args: dict[str, float | str]):
-    convert = """convert {input} \\
-      \\( -resize {down}% \\) \\
-      \\( -kuwahara {kuw} \\) \\
-      \\( -ordered-dither {ordered-dither} -colors {colors} \\) \\
-      \\( -interpolate {interpolate} -filter {filter} \\) \\
-      \\( -resize {up}% \\) \\
-      {output}
-      """.format(
-        **args
-    )
+def convert_img(input_path: str, output_dir: str, params: list[dict[str, float | str]]):
+    name, ext = os.path.basename(input_path).split(".")
 
-    os.system(convert)
-    print("Finished:", args["output"])
+    cmd = [f"convert {input_path}"]
+    for p in params:
+        cmd.append("\\(")
+        for k, v in p.items():
+            cmd.append(f"-{k} {v}")
+            name += f"_{k}_{v}"
+        cmd.append("\\)")
+
+    name += f".{ext}"
+    name = os.path.join(output_dir, name)
+
+    cmd.append(name)
+
+    c = " ".join(cmd)
+    os.system(c)
+
+    return name
 
 
 def to_percent(n: float):
     return math.floor(n * 100)
-
-
-def build_args(input: str, args: dict[str, float | str], output_dir: str = ""):
-    args["output"] = build_output_path(input, args, output_dir)
-    args["input"] = input
-    return args
-
-
-def build_output_path(input: str, args: dict[str, float | str], output_dir: str = ""):
-    base, ext = input.split(".")
-    out = os.path.join(output_dir, base)
-    for k, v in args.items():
-        out += f"_{k}_{v}"
-    out += f".{ext}"
-    return out
 
 
 if __name__ == "__main__":

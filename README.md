@@ -137,3 +137,4 @@ the Triangle filter results in a softer image.
 ### Upscale
 
 The final upscale is just to get the image back to it's original size.
+I use the inverse of the downscale percentage to do this.
