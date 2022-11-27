@@ -13,18 +13,32 @@ def main():
     input = sys.argv[1]
     output_dir = "out"
 
-    down = 1 / 2
+    result = soft_pixel(input, output_dir)
+    print("Finished: ", result)
 
-    f = [
-        {"resize": f"{to_percent(down)}%"},
+
+def hard_pixel(input_path: str, output_dir: str):
+    args: list[dict[str, float | str]] = [
         {"kuwahara": 1},
+        {"resize": f"{to_percent(0.5)}%"},
         {"ordered-dither": "o8x8,3", "colors": 8},
         {"interpolate": "Nearest", "filter": "Box"},
-        {"resize": f"{to_percent(1/down)}%"},
+        {"resize": f"{to_percent(1 / 0.5)}%"},
     ]
 
-    result = convert_img(input, output_dir, f)
-    print("Finished: ", result)
+    return convert_img(input_path, output_dir, args)
+
+
+def soft_pixel(input_path: str, output_dir: str):
+    args: list[dict[str, float | str]] = [
+        {"kuwahara": 1},
+        {"resize": f"{to_percent(0.22)}%"},
+        {"dither": "Floyd-Steinberg", "colors": 8},
+        {"interpolate": "Nearest", "filter": "Box"},
+        {"resize": f"{to_percent(1 / 0.22)}%"},
+    ]
+
+    return convert_img(input_path, output_dir, args)
 
 
 def convert_img(input_path: str, output_dir: str, params: list[dict[str, float | str]]):
